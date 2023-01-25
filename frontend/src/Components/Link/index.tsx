@@ -11,7 +11,11 @@ const Link = () => {
   const onSuccess = React.useCallback(
     (public_token: string) => {
       // If the access_token is needed, send public_token to server
+      console.log(`Step 4: Get back our short-loved public token: ${public_token}`);
       const exchangePublicTokenForAccessToken = async () => {
+        console.log(
+          "Step 5: Send this token to our server to exchange it for an access token"
+        )
         const response = await fetch("/api/set_access_token", {
           method: "POST",
           headers: {
@@ -67,6 +71,7 @@ const Link = () => {
     isOauth = true;
   }
 
+  console.log("Step 3: Calling usePlaidLink with a real link token");
   const { open, ready } = usePlaidLink(config);
 
   useEffect(() => {

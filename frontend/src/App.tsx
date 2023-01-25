@@ -33,6 +33,7 @@ const App = () => {
   const generateToken = useCallback(
     async (isPaymentInitiation) => {
       // Link tokens for 'payment_initiation' use a different creation flow in your backend.
+      console.log("Step 1: Request a link token from the server");
       const path = isPaymentInitiation
         ? "/api/create_link_token_for_payment"
         : "/api/create_link_token";
@@ -55,6 +56,9 @@ const App = () => {
           });
           return;
         }
+          console.log(
+            `Step 2a: Receieved the link token from the server ${JSON.stringify(data)}`
+          );
         dispatch({ type: "SET_STATE", state: { linkToken: data.link_token } });
       }
       // Save the link_token to be used later in the Oauth flow.
@@ -95,6 +99,7 @@ const App = () => {
               <>
                 <Products />
                 <Items />
+                <button onClick={simpleTransactionCall}>Get transactions!</button>
               </>
             )}
           </>
@@ -102,6 +107,17 @@ const App = () => {
       </div>
     </div>
   );
+};
+
+
+// Skip all the fancy React stuff
+const simpleTransactionCall = async () => {
+  // Call our local server
+  const response = await fetch("api/transactions", {
+    method: "GET",
+  });
+  const data = await response.json();
+  console.log(`Here's your data! ${JSON.stringify(data)}`)
 };
 
 export default App;

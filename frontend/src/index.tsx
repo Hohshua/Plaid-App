@@ -1,8 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
+// import { render } from "react-dom";
 import App from "./App";
 import { QuickstartProvider } from "./Context";
 import reportWebVitals from "./reportWebVitals";
+
+// const rootElement = document.getElementById("root");
+// render(<App />, rootElement);
+
 
 ReactDOM.render(
   <React.StrictMode>

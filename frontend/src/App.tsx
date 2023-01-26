@@ -3,9 +3,34 @@ import React, { useEffect, useContext, useCallback } from "react";
 import Header from "./Components/Headers";
 import Products from "./Components/ProductTypes/Products";
 import Items from "./Components/ProductTypes/Items";
+import Balances from "./Components/Balances";
+import BalanceChart from "./Components/Balances";
 import Context from "./Context";
 
 import styles from "./App.module.scss";
+
+import { abort } from "process";
+
+// import drawChart from "./setupProxy.js"
+
+// import google from "../node_modules/react-google-charts"
+import {Chart} from "react-google-charts"
+
+
+const data2 = [
+  ["Category", "Amount"],
+  ["Work", 11],
+  ["Eat", 2],
+  ["Commute", 2],
+  ["Watch TV", 2],
+  ["Sleep", 7],
+];
+
+const options = {
+  title: "Distribution",
+  pieHole: 0.4
+};
+
 
 const App = () => {
   const { linkSuccess, isItemAccess, isPaymentInitiation, dispatch } = useContext(Context);
@@ -86,6 +111,18 @@ const App = () => {
     init();
   }, [dispatch, generateToken, getInfo]);
 
+  const getBalance = async () => {
+    const response = await fetch("api/accounts", {
+      method: "GET",
+    });
+    const data = await response.json();
+    console.log(`Here's your data! ${JSON.stringify(data)}`);
+    const accounts = data.accounts;
+    const balances = accounts[0].balances;
+    const available = JSON.stringify(balances.available);
+    console.log(`Balance: ${JSON.stringify(balances.available)}`);
+  };
+  
   return (
     <div className={styles.App}>
       <div className={styles.container}>
@@ -99,7 +136,17 @@ const App = () => {
               <>
                 <Products />
                 <Items />
+                <Chart
+                    chartType="PieChart"
+                    data={data2}
+                    options={options}
+                    width={"100%"}
+                    height={"400px"}
+                  />
                 <button onClick={simpleTransactionCall}>Get transactions!</button>
+                <button onClick={getBalance}>Get Balance!</button>
+                <Balances />
+                {/* <BalanceChart /> */}
               </>
             )}
           </>
@@ -109,6 +156,25 @@ const App = () => {
   );
 };
 
+
+
+const GetBalance = async () => {
+  const response = await fetch("api/accounts", {
+    method: "GET",
+  });
+  const data = await response.json();
+  console.log(`Here's your data! ${JSON.stringify(data)}`);
+  const accounts = data.accounts;
+  const balances = accounts[0].balances;
+  console.log(`Balance: ${JSON.stringify(balances.available)}`);
+  const available = JSON.stringify(balances.available);
+
+  return (
+    <div>
+      <p>Balance: {available}</p>
+    </div>
+  )
+};
 
 // Skip all the fancy React stuff
 const simpleTransactionCall = async () => {

@@ -473,6 +473,21 @@ export const transformBalanceData = (data: AccountsGetResponse) => {
   });
 };
 
+export const getBalanceData = (data: AccountsGetResponse) => {
+  const balanceData = data.accounts;
+  return balanceData.map((account) => {
+    const balance: number | null | undefined =
+      account.balances.available || account.balances.current;
+    const obj: DataItem = {
+      name: account.name,
+      balance: formatCurrency(balance, account.balances.iso_currency_code),
+      subtype: account.subtype,
+      mask: account.mask!,
+    };
+    return obj;
+  });
+};
+
 interface InvestmentData {
   error: null;
   holdings: InvestmentsHoldingsGetResponse;

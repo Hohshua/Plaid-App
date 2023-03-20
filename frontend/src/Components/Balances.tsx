@@ -25,8 +25,8 @@ const Balances = () => (
         transformData={getBalanceData}
       />
     </ProductTypesContainer>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <div id="piechart" ></div>
+    {/* <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <div id="piechart" ></div> */}
   </>
 );
 
@@ -36,6 +36,19 @@ const BalanceChart = () => (
         <div id="piechart" className={styles.gChart}></div>
     </>
 )
+
+const getBalance = async () => {
+  const response = await fetch("api/accounts", {
+    method: "GET",
+  });
+  const data = await response.json();
+  console.log(`Here's your data! ${JSON.stringify(data)}`);
+  const accounts = data.accounts;
+  const balances = accounts[0].balances;
+  const available = JSON.stringify(balances.available);
+  console.log(`Balance: ${JSON.stringify(balances.available)}`);
+  return {data};
+};
 
 Balances.displayName = "Balances";
 

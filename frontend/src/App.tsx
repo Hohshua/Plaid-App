@@ -19,43 +19,6 @@ import { abort } from "process";
 import {Chart} from "react-google-charts"
 import { visitFunctionBody } from "typescript";
 
-let outerValue: string;
-
-// const address = fetch("api/accounts", {
-//   method: "GET",
-// })
-// .then((response) => response.json())
-// .then((data) => {
-//   console.log(data.accounts[0].balances.available)
-//   outerValue = data.accounts[0].balances.available.toString();
-//   return data.accounts[0].balances.available;
-// });
-
-// const printAddress = async (): Promise<string> => {
-//   await address;
-//   console.log(outerValue);
-//   return outerValue;
-// };
-
-// let tempTable: Array<Array<string | number>>;
-
-// async function getValue() {
-//   let resolvedValue = await printAddress();
-//   tempTable = [    ["Category", "Amount"],
-//     [resolvedValue, 11],
-//     ["Eat", 2],
-//     ["Commute", 2],
-//     ["Watch TV", 2],
-//     ["Sleep", 7],
-//   ];
-//   console.log(tempTable);
-// }
-
-// getValue();
-
-
-
-
 
 
 const TransactionCall = fetch("api/transactions", {
@@ -67,38 +30,12 @@ const TransactionCall = fetch("api/transactions", {
   return data.latest_transactions;
 });
 
-const getCategories = async () => {
-  const transactionData = await TransactionCall;
-  const categories = new Set();
-  for (let i = 0; i < transactionData.length; i++) {
-    categories.add(transactionData[i].category[0]);
-  }
-  return Array.from(categories);
-};
 
-// const createTable = async () => {
-//   const transactionData = await TransactionCall;
-//   const table = new Map();
-//   for (let i = 0; i < transactionData.length; i++) {
-//     const category = transactionData[i].category[0];
-//     const amount = transactionData[i].amount;
-//     console.log(category);
-//     console.log(amount);
-//     if (table.has(category)) {
-//       table.set(category, table.get(category) + amount);
-//     } else {
-//       table.set(category, amount);
-//     }
-//   }
-//   // console.log(Array.from(table.entries()));
-//   return Array.from(table.entries());
-// };
-
-let googleTable: Array<Array<string | number>>;
-async function createTable() {
+let pieTable: Array<Array<string | number>>;
+let barTable: Array<Array<string | number | object | null>>;
+const createTable = async () => {
   const transactionData = await TransactionCall;
   const table = new Map([["Category", "Amount"]]);
-  console.log(Object.keys(transactionData).length);
   for (let i = 0; i < transactionData.length; i++) {
     const category = transactionData[i].category[1];
     let amount = transactionData[i].amount;
@@ -111,15 +48,25 @@ async function createTable() {
       table.set(category, amount);
     }
   }
-  googleTable = Array.from(table.entries());
-  console.log(googleTable)
-  // console.log(Array.from(table.entries()));
+
+  pieTable = Array.from(table.entries());
+  barTable = Array.from(table.entries());
+  let colors = [null, 'blue', 'red', 'orange'];
+  for (let i = 0; i < barTable.length; i++) {
+    if (i == 0) {
+      barTable[i].push({role: 'style'}, {role: 'annotation'});
+    }
+    else {
+      barTable[i].push(colors[i], '$' + barTable[i][1]);
+    }
+  }
+  console.log(pieTable);
+  console.log(barTable);
   // return Array.from(table.entries());
-}
+};
 
-createTable()
-
-
+// const pieTable = createTable();
+createTable();
 
 
 
@@ -241,34 +188,22 @@ const App = () => {
     return data.latest_transactions[0];
   };
 
-  // const jsonTransaction = simpleTransactionCall();
-  // const chartData = [
-  //   ["Category", "Amount"],
-  //   [JSON.stringify(jsonTransaction.latest_transactions[0].account_id[0].category[0]), 11],
-  //   ["Eat", 2],
-  //   ["Commute", 2],
-  //   ["Watch TV", 2],
-  //   ["Sleep", 7],
-  // ];
-  
-  // const chartData = [
-  //   ["Category", "Amount"],
-  //   [`${printAddress()}`, 11],
-  //   ["Eat", 2],
-  //   ["Commute", 2],
-  //   ["Watch TV", 2],
-  //   ["Sleep", 7],
-  // ];
-
   const pieOptions = {
     title: "Distribution",
     pieHole: 0.4
   };
   const barOptions = {
-    title: "Spending",
+    title: "Spendings",
     is3D: true,
-    legend: { position: "right" },
+    legend: { position: "none" },
+    vAxis: { format: '$#,###' },
+    hAxis: { minValue: 0 },
   };
+
+  const monthlyOptions = {
+    title: 'Monthly Total',
+    legend: { position: "right" }
+  }
   
   return (
     <div className={styles.App}>
@@ -285,15 +220,22 @@ const App = () => {
                 <Items />
                 <Chart
                     chartType="PieChart"
-                    data={googleTable}
+                    data={pieTable}
                     options={pieOptions}
                     width={"100%"}
                     height={"400px"}
                   />
                 <Chart 
-                    chartType="BarChart"
-                    data={googleTable}
+                    chartType="ColumnChart"
+                    data={barTable}
                     options={barOptions}
+                    width={"100%"}
+                    height={"400px"}
+                />
+                <Chart 
+                    chartType="BarChart"
+                    data={barTable}
+                    options={monthlyOptions}
                     width={"100%"}
                     height={"400px"}
                 />

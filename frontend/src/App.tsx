@@ -33,6 +33,7 @@ const TransactionCall = fetch("api/transactions", {
 
 let pieTable: Array<Array<string | number>>;
 let barTable: Array<Array<string | number | object | null>>;
+let monthlyTable: any[][] = [];
 const createTable = async () => {
   const transactionData = await TransactionCall;
   const table = new Map([["Category", "Amount"]]);
@@ -49,6 +50,40 @@ const createTable = async () => {
     }
   }
 
+  monthlyTable.push(['Category']);
+  let [janTotal, febTotal, marTotal, aprTotal, mayTotal, junTotal, julTotal, augTotal, sepTotal, octTotal, novTotal, decTotal] = [0,0,0,0,0,0,0,0,0,0,0,0];
+  let categoryCount = 0;
+  for (let i = 0; i < transactionData.length; i++) {
+    if (monthlyTable[0].includes(transactionData[i].category[1]) == false) {monthlyTable[0].push(transactionData[i].category[1]);categoryCount++}
+    let monthDigit = transactionData[i].date.substr(5, 2);
+    console.log(monthDigit);
+    if (monthDigit == '01' && !monthlyTable.some(row => row[0] === 'Jan')) {monthlyTable.push(['Jan'])}
+    if (monthDigit == '02' && !monthlyTable.some(row => row[0] === 'Feb')) {monthlyTable.push(['Feb'])}
+    if (monthDigit == '03' && !monthlyTable.some(row => row[0] === 'Mar')) {monthlyTable.push(['Mar'])}
+    if (monthDigit == '04' && !monthlyTable.some(row => row[0] === 'Apr')) {monthlyTable.push(['Apr'])}
+    if (monthDigit == '05' && !monthlyTable.some(row => row[0] === 'May')) {monthlyTable.push(['May'])}
+    if (monthDigit == '06' && !monthlyTable.some(row => row[0] === 'Jun')) {monthlyTable.push(['Jun'])}
+    if (monthDigit == '07' && !monthlyTable.some(row => row[0] === 'Jul')) {monthlyTable.push(['Jul'])}
+    if (monthDigit == '08' && !monthlyTable.some(row => row[0] === 'Aug')) {monthlyTable.push(['Aug'])}
+    if (monthDigit == '09' && !monthlyTable.some(row => row[0] === 'Sep')) {monthlyTable.push(['Sep'])}
+    if (monthDigit == '10' && !monthlyTable.some(row => row[0] === 'Oct')) {monthlyTable.push(['Oct'])}
+    if (monthDigit == '11' && !monthlyTable.some(row => row[0] === 'Nov')) {monthlyTable.push(['Nov'])}
+    if (monthDigit == '12' && !monthlyTable.some(row => row[0] === 'Dec')) {monthlyTable.push(['Dec'])}
+  }
+  for (let i = 1; i < monthlyTable.length; i++) {for (let j = 0; j < categoryCount; j++) {monthlyTable[i].push(0)}}
+  monthlyTable[0].push({role: 'annotation'});
+  monthlyTable[1][1] = 5.4; monthlyTable[1][2] = 0; monthlyTable[1][3] = 0; monthlyTable[1].push('');
+  monthlyTable[2][1] = 6.33; monthlyTable[2][2] = 111.13; monthlyTable[2][3] = 500; monthlyTable[2].push('');
+  monthlyTable[3][1] = 6.3; monthlyTable[3][2] = 0; monthlyTable[3][3] = 0; monthlyTable[3].push('');
+
+  // for (let i = 1; i < monthlyTable[0].length; i++) {
+  //   for (let j = 1; j < monthlyTable[1].length; j++) {
+  //     monthlyTable[i][j] += ;
+  //   }
+  // }
+
+
+  console.log(monthlyTable);
   pieTable = Array.from(table.entries());
   barTable = Array.from(table.entries());
   let colors = [null, 'blue', 'red', 'orange'];
@@ -190,7 +225,8 @@ const App = () => {
 
   const pieOptions = {
     title: "Distribution",
-    pieHole: 0.4
+    pieHole: 0.4,
+    legend: { position: "bottom" }
   };
   const barOptions = {
     title: "Spendings",
@@ -202,14 +238,38 @@ const App = () => {
 
   const monthlyOptions = {
     title: 'Monthly Total',
-    legend: { position: "right" }
+    // legend: { position: "right" },
+    hAxis: { format: '$#,###' }
   }
   
   return (
     <div className={styles.App}>
+      <div className={styles.gChart}>
+        <Chart
+            chartType="PieChart"
+            data={pieTable}
+            options={pieOptions}
+            width={"100%"}
+            height={"400px"}
+          />
+        <Chart 
+            chartType="ColumnChart"
+            data={barTable}
+            options={barOptions}
+            width={"100%"}
+            height={"400px"}
+        />
+        <Chart 
+            chartType="BarChart"
+            data={monthlyTable}
+            options={monthlyOptions}
+            width={"100%"}
+            height={"400px"}
+        />
+      </div>
       <div className={styles.container}>
         <Header />
-        {linkSuccess && (
+        {/* {linkSuccess && (
           <>
             {isPaymentInitiation && (
               <Products />
@@ -218,35 +278,13 @@ const App = () => {
               <>
                 <Products />
                 <Items />
-                <Chart
-                    chartType="PieChart"
-                    data={pieTable}
-                    options={pieOptions}
-                    width={"100%"}
-                    height={"400px"}
-                  />
-                <Chart 
-                    chartType="ColumnChart"
-                    data={barTable}
-                    options={barOptions}
-                    width={"100%"}
-                    height={"400px"}
-                />
-                <Chart 
-                    chartType="BarChart"
-                    data={barTable}
-                    options={monthlyOptions}
-                    width={"100%"}
-                    height={"400px"}
-                />
                 <button onClick={simpleTransactionCall}>Get transactions!</button>
                 <button onClick={printBalance}>Get Balance!</button>
                 <Balances />
-                {/* <BalanceChart /> */}
               </>
             )}
           </>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -16,6 +16,9 @@ $threads-font-path: "~plaid-threads/fonts";
 }
 
 .gChart {
-  width: 900px;
-  height: 500px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10px;
+  align-items: center;
+  min-width: 700;
 }

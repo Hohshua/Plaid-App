@@ -26,7 +26,7 @@ const TransactionCall = fetch("api/transactions", {
 })
 .then((response) => response.json())
 .then((data) => {
-  // console.log(data);
+  console.log(data);
   return data.latest_transactions;
 });
 
@@ -72,9 +72,9 @@ const createTable = async () => {
   }
   for (let i = 1; i < monthlyTable.length; i++) {for (let j = 0; j < categoryCount; j++) {monthlyTable[i].push(0)}}
   monthlyTable[0].push({role: 'annotation'});
-  monthlyTable[1][1] = 5.4; monthlyTable[1][2] = 0; monthlyTable[1][3] = 0; monthlyTable[1].push('');
-  monthlyTable[2][1] = 6.33; monthlyTable[2][2] = 111.13; monthlyTable[2][3] = 500; monthlyTable[2].push('');
-  monthlyTable[3][1] = 6.3; monthlyTable[3][2] = 0; monthlyTable[3][3] = 0; monthlyTable[3].push('');
+  // monthlyTable[1][1] = 5.4; monthlyTable[1][2] = 0; monthlyTable[1][3] = 0; monthlyTable[1].push('');
+  monthlyTable[1][1] = 16.33; monthlyTable[1][2] = 500; monthlyTable[1][3] = 5.4; monthlyTable[1].push('');
+  monthlyTable[2][1] = 105.73; monthlyTable[2][2] = 0; monthlyTable[2][3] = 6.33; monthlyTable[2].push('');
 
   // for (let i = 1; i < monthlyTable[0].length; i++) {
   //   for (let j = 1; j < monthlyTable[1].length; j++) {
@@ -238,8 +238,9 @@ const App = () => {
 
   const monthlyOptions = {
     title: 'Monthly Total',
-    // legend: { position: "right" },
-    hAxis: { format: '$#,###' }
+    legend: { position: "none" },
+    hAxis: { format: '$#,###' },
+    isStacked: true
   }
   
   return (
@@ -269,7 +270,7 @@ const App = () => {
       </div>
       <div className={styles.container}>
         <Header />
-        {/* {linkSuccess && (
+        {linkSuccess && (
           <>
             {isPaymentInitiation && (
               <Products />
@@ -284,7 +285,7 @@ const App = () => {
               </>
             )}
           </>
-        )} */}
+        )}
       </div>
     </div>
   );
